@@ -29,7 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { ArrowLeft, Download, RefreshCw, Trash2, Eye, Upload } from "lucide-react"
+import { ArrowLeft, Download, RefreshCw, Trash2, Eye, Upload, Palette } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface Page {
@@ -336,12 +336,19 @@ export default function BookDetailPage() {
               <CardTitle className="text-2xl">{book.title}</CardTitle>
               <CardDescription>by {book.author}</CardDescription>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Book
+            <div className="flex gap-2">
+              <Link href={`/admin/books/${book.id}/theme`}>
+                <Button variant="outline" size="sm">
+                  <Palette className="mr-2 h-4 w-4" />
+                  Customize Theme
                 </Button>
+              </Link>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Book
+                  </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -356,7 +363,8 @@ export default function BookDetailPage() {
                   <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
-            </AlertDialog>
+              </AlertDialog>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 text-sm md:grid-cols-3">
