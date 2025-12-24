@@ -128,11 +128,13 @@ export async function POST(request: NextRequest) {
       audio_link: currentPage.audioLink,
       next_code: nextPage?.code || null,
       prev_code: prevPage?.code || null,
-      prefetch: prefetchPages.map((p) => ({
-        code: p.code,
-        page_number: p.pageNumber,
-        audio_link: p.audioLink,
-      })),
+      prefetch: prefetchPages.map(
+        (p: { code: string; pageNumber: number; audioLink: string }) => ({
+          code: p.code,
+          page_number: p.pageNumber,
+          audio_link: p.audioLink,
+        })
+      ),
     }
 
     return NextResponse.json(response, {

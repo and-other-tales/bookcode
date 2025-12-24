@@ -66,10 +66,9 @@ export function codeToWavePattern(code: string): number[] {
   // Generate 24 bars (4 per character) for visual appeal
   const bars: number[] = []
 
-  charValues.forEach((val, idx) => {
-    // Use character value and position to create variations
+  charValues.forEach((val) => {
+    // Use character value to create variations
     const normalizedVal = val / maxValue
-    const seed = (idx + 1) * 7
 
     // Create 4 bars per character with slight variations
     bars.push(Math.min(1, normalizedVal * 0.8 + 0.2))

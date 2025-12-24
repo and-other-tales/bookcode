@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Book {
@@ -17,6 +16,7 @@ model Book {
   isbn          String?
   pageCount     Int      @map("page_count")
   coverImageUrl String?  @map("cover_image_url")
+  themeConfig   Json?    @map("theme_config")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
   pages         Page[]

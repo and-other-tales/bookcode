@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -46,13 +46,7 @@ export default function DashboardPage() {
     }
   }, [status, router])
 
-  useEffect(() => {
-    if (session) {
-      fetchBooks()
-    }
-  }, [session, search])
-
-  async function fetchBooks() {
+  const fetchBooks = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
@@ -73,7 +67,13 @@ export default function DashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [search])
+
+  useEffect(() => {
+    if (session) {
+      fetchBooks()
+    }
+  }, [session, fetchBooks])
 
   if (status === "loading" || !session) {
     return (

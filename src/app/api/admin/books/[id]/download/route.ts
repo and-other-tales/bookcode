@@ -71,7 +71,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const manifestContent = [
       'page_number,code,audio_link',
       ...book.pages.map(
-        (p) => `${p.pageNumber},"${p.code}","${p.audioLink}"`
+        (p: { pageNumber: number; code: string; audioLink: string }) =>
+          `${p.pageNumber},"${p.code}","${p.audioLink}"`
       ),
     ].join('\n')
 
