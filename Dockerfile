@@ -1,4 +1,4 @@
-# Multi-stage build for optimized image
+# Multi-stage build for optimized Cloud Run deployment
 FROM node:20-alpine AS base
 
 # Install dependencies for sharp and other native modules
@@ -30,14 +30,14 @@ RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Build Next.js app
+# Build Next.js app (no secrets needed at build time)
 RUN npm run build
 
 # Production runner stage
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Install sharp dependencies for production
+# Install runtime dependencies
 RUN apk add --no-cache libc6-compat
 
 ENV NODE_ENV=production
@@ -63,14 +63,19 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
+# Copy startup script
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/start.sh ./start.sh
+RUN chmod +x ./start.sh
+
 # Switch to non-root user
 USER nextjs
 
-# Expose port
+# Expose port (Cloud Run uses PORT env var)
 EXPOSE 3000
 
+# Default port (Cloud Run will override via PORT env var)
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Run migrations and start server
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+# Run startup script (validates env vars, runs migrations, starts server)
+CMD ["./start.sh"]
