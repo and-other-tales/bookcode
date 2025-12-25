@@ -49,4 +49,4 @@ npx prisma migrate deploy
 
 # Start the server
 echo "Starting server..."
-exec node server.js
+exec node /app/server.js

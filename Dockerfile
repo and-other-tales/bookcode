@@ -61,9 +61,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy Prisma files for migrations
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+
+# Copy ALL node_modules from builder for Prisma CLI to work properly
+# The standalone build doesn't include dev dependencies needed for migrations
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy startup script
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/start.sh ./start.sh
