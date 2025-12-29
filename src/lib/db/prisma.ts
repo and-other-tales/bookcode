@@ -9,13 +9,10 @@ const globalForPrisma = globalThis as unknown as {
 /**
  * Strip Prisma-specific query parameters from DATABASE_URL.
  * The 'schema' parameter is Prisma-specific and not understood by pg Pool.
- * Uses regex instead of URL parsing because Cloud SQL socket connection
- * strings (postgresql://user:pass@/db?host=/cloudsql/...) are invalid URLs.
  */
 function cleanConnectionString(url: string | undefined): string | undefined {
   if (!url) return url
   // Remove schema parameter and clean up query string
-  // Handle: ?schema=x, &schema=x, ?schema=x&other, &schema=x&other
   return url
     .replace(/\?schema=[^&]*&/, '?')  // ?schema=x& -> ?
     .replace(/&schema=[^&]*/g, '')     // &schema=x -> (empty)
