@@ -6,8 +6,24 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+/**
+ * Strip Prisma-specific query parameters from DATABASE_URL.
+ * The 'schema' parameter is Prisma-specific and not understood by pg Pool.
+ */
+function cleanConnectionString(url: string | undefined): string | undefined {
+  if (!url) return url
+  try {
+    const parsed = new URL(url)
+    parsed.searchParams.delete('schema')
+    return parsed.toString()
+  } catch {
+    // If URL parsing fails, return as-is
+    return url
+  }
+}
+
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL
+  const connectionString = cleanConnectionString(process.env.DATABASE_URL)
   const pool = new Pool({ connectionString })
   const adapter = new PrismaPg(pool)
 
