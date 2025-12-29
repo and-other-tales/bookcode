@@ -12,14 +12,11 @@ const globalForPrisma = globalThis as unknown as {
  */
 function cleanConnectionString(url: string | undefined): string | undefined {
   if (!url) return url
-  try {
-    const parsed = new URL(url)
-    parsed.searchParams.delete('schema')
-    return parsed.toString()
-  } catch {
-    // If URL parsing fails, return as-is
-    return url
-  }
+  // Remove schema parameter and clean up query string
+  return url
+    .replace(/\?schema=[^&]*&/, '?')  // ?schema=x& -> ?
+    .replace(/&schema=[^&]*/g, '')     // &schema=x -> (empty)
+    .replace(/\?schema=[^&]*$/, '')    // ?schema=x at end -> (empty)
 }
 
 function createPrismaClient() {
