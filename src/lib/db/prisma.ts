@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 /**
- * Strip Prisma-specific query parameters from DATABASE_URL.
+ * Strip Prisma-specific query parameters from a connection string.
  * The 'schema' parameter is Prisma-specific and not understood by pg Pool.
  */
 function cleanConnectionString(url: string | undefined): string | undefined {
@@ -19,8 +19,25 @@ function cleanConnectionString(url: string | undefined): string | undefined {
     .replace(/\?schema=[^&]*$/, '')    // ?schema=x at end -> (empty)
 }
 
+/**
+ * Build a PostgreSQL connection string from individual environment variables.
+ * Falls back to DATABASE_URL if individual vars are not set.
+ */
+function buildConnectionString(): string | undefined {
+  const { DB_USER, DB_PASSWORD, DB_NAME, DB_HOST, DATABASE_URL } = process.env
+
+  // If individual DB_* vars are provided, build the connection string
+  if (DB_USER && DB_PASSWORD && DB_NAME && DB_HOST) {
+    const port = process.env.DB_PORT || '5432'
+    return `postgresql://${DB_USER}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}:${port}/${DB_NAME}`
+  }
+
+  // Fall back to DATABASE_URL
+  return cleanConnectionString(DATABASE_URL)
+}
+
 function createPrismaClient() {
-  const connectionString = cleanConnectionString(process.env.DATABASE_URL)
+  const connectionString = buildConnectionString()
   const pool = new Pool({ connectionString })
   const adapter = new PrismaPg(pool)
 
