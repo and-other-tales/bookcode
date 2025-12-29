@@ -29,10 +29,14 @@ function buildConnectionString(): string | undefined {
   // If individual DB_* vars are provided, build the connection string
   if (DB_USER && DB_PASSWORD && DB_NAME && DB_HOST) {
     const port = process.env.DB_PORT || '5432'
+    console.log(`Database: connecting to ${DB_HOST}:${port}/${DB_NAME} as ${DB_USER}`)
     return `postgresql://${DB_USER}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}:${port}/${DB_NAME}`
   }
 
   // Fall back to DATABASE_URL
+  if (DATABASE_URL) {
+    console.log('Database: using DATABASE_URL')
+  }
   return cleanConnectionString(DATABASE_URL)
 }
 

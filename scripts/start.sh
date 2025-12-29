@@ -6,9 +6,11 @@ echo "Validating environment variables..."
 
 missing_vars=""
 
-# Required for database
+# Required for database: either DATABASE_URL or all of DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 if [ -z "$DATABASE_URL" ]; then
-  missing_vars="$missing_vars DATABASE_URL"
+  if [ -z "$DB_HOST" ] || [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ] || [ -z "$DB_NAME" ]; then
+    missing_vars="$missing_vars DATABASE_URL (or DB_HOST+DB_USER+DB_PASSWORD+DB_NAME)"
+  fi
 fi
 
 # Required for authentication
@@ -29,10 +31,19 @@ if [ -n "$missing_vars" ]; then
   echo "ERROR: Missing required environment variables:$missing_vars"
   echo ""
   echo "Required environment variables:"
-  echo "  DATABASE_URL      - PostgreSQL connection string"
-  echo "  NEXTAUTH_SECRET   - Secret for NextAuth.js session encryption"
-  echo "  NEXTAUTH_URL      - Full URL of the application (e.g., https://your-app.run.app)"
-  echo "  ADMIN_PASSWORD    - Password for admin authentication"
+  echo "  Database (one of the following):"
+  echo "    DATABASE_URL                - PostgreSQL connection string"
+  echo "    OR all of these individual vars:"
+  echo "      DB_HOST                   - Database host (e.g., 10.2.0.5)"
+  echo "      DB_USER                   - Database username"
+  echo "      DB_PASSWORD               - Database password"
+  echo "      DB_NAME                   - Database name"
+  echo "      DB_PORT                   - Database port (optional, defaults to 5432)"
+  echo ""
+  echo "  Authentication:"
+  echo "    NEXTAUTH_SECRET             - Secret for NextAuth.js session encryption"
+  echo "    NEXTAUTH_URL                - Full URL of the application (e.g., https://your-app.run.app)"
+  echo "    ADMIN_PASSWORD              - Password for admin authentication"
   echo ""
   echo "Optional environment variables:"
   echo "  GOOGLE_CLOUD_PROJECT - GCP project ID for Cloud Storage"
