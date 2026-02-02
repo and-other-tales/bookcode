@@ -1,6 +1,6 @@
-# BookCode - Spotify-Style Wave Code Generator
+# BookCode - A Spotify-Style Wave Code Generator
 
-Generate unique wave codes for book pages that link to audio content. Each code can be scanned by companion apps to play associated audio.
+An early experiment for fiction novels for starting read-a-long audiobooks starting from a physical book page by testing similar mechanics to Spotify's Audio Track ID Design - 2D Barcodes that can be uniquely shaped and styled to match the artwork or thematics of a piece of work and remain machine readable. WIP.
 
 ## Features
 
